@@ -13,19 +13,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM azul/zulu-openjdk:17 as builder
+FROM docker.io/azul/zulu-openjdk:17 as builder
 
 COPY . /app/
 WORKDIR /app/
 
 RUN ["./gradlew", "build", "shadowJar"]
 
-FROM azul/zulu-openjdk:17-jre-headless
+FROM docker.io/azul/zulu-openjdk:17-jre-headless
 
-RUN \
-    set -xeu && \
-    groupadd iceberg --gid 1000 && \
-    useradd iceberg --uid 1000 --gid 1000 --create-home
+# # Commented out to use current user as root instead of a user and group named "iceberg"
+# RUN \
+#     set -xeu && \
+#     groupadd iceberg --gid 1000 && \
+#     useradd iceberg --uid 1000 --gid 1000 --create-home
 
 COPY --from=builder --chown=iceberg:iceberg /app/build/libs/iceberg-rest-image-all.jar /usr/lib/iceberg-rest/iceberg-rest-image-all.jar
 
