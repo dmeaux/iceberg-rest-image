@@ -28,7 +28,9 @@ FROM docker.io/azul/zulu-openjdk:17-jre-headless
 #     groupadd iceberg --gid 1000 && \
 #     useradd iceberg --uid 1000 --gid 1000 --create-home
 
-COPY --from=builder --chown=iceberg:iceberg /app/build/libs/iceberg-rest-image-all.jar /usr/lib/iceberg-rest/iceberg-rest-image-all.jar
+# COPY --from=builder --chown=iceberg:iceberg /app/build/libs/iceberg-rest-image-all.jar /usr/lib/iceberg-rest/iceberg-rest-image-all.jar
+
+COPY --from=builder /app/build/libs/iceberg-rest-image-all.jar /usr/lib/iceberg-rest/iceberg-rest-image-all.jar
 
 ENV CATALOG_CATALOG__IMPL=org.apache.iceberg.jdbc.JdbcCatalog
 ENV CATALOG_URI=jdbc:sqlite:file:/tmp/iceberg_rest_mode=memory
@@ -37,7 +39,7 @@ ENV CATALOG_JDBC_PASSWORD=password
 ENV REST_PORT=8181
 
 EXPOSE $REST_PORT
-USER iceberg:iceberg
+# USER iceberg:iceberg
 ENV LANG en_US.UTF-8
 WORKDIR /usr/lib/iceberg-rest
 CMD ["java", "-jar", "iceberg-rest-image-all.jar"]
